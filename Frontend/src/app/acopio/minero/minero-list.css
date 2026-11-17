@@ -1,0 +1,7 @@
+.title-row { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.8rem; flex-wrap: wrap; }
+.title-row h1 { margin: .45rem 0; font-size: 2.3rem; }
+.lead { margin: 0; color: #aebdd1; }
+.actions { display: flex; gap: .7rem; }
+.acciones { display: flex; gap: .8rem; align-items: center; }
+.acciones a, .acciones button { border: 0; background: transparent; color: #f8cf76; text-decoration: underline; padding: 0; }
+.acciones button { color: #ffb4ab; }

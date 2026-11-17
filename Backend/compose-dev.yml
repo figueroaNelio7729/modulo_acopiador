@@ -1,0 +1,25 @@
+name: sitra-oro-dev
+
+# Oracle ya corre en tu maquina como contenedor "sitra-oro-oracle23" (puerto 1522).
+# Este archivo documenta como levantarlo desde cero.
+services:
+  oracle:
+    image: gvenzl/oracle-free:23
+    container_name: sitra-oro-oracle23
+    ports:
+      - "1522:1521"
+    environment:
+      ORACLE_PASSWORD: 123456
+      APP_USER: BOMERP_APP
+      APP_USER_PASSWORD: 123456
+      TZ: America/Lima
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  oracle-data:

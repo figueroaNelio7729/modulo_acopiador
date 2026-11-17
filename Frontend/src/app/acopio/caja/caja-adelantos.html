@@ -1,0 +1,132 @@
+<section class="panel-page">
+  <header class="head">
+    <div>
+      <p class="eyebrow">Caja · adelantos a mineros</p>
+      <h1>Caja y adelantos</h1>
+      <p class="sub">Controla el dinero en soles del centro y entrega adelantos a mineros: se descuentan solos cuando les compras oro.</p>
+    </div>
+  </header>
+
+  @if (error()) { <p class="alert error-alert">{{ error() }}</p> }
+  @if (ok()) { <p class="alert ok-alert">{{ ok() }}</p> }
+
+  <!-- Saldo -->
+  <div class="saldo-grid">
+    <div class="saldo principal" [class.negativo]="(resumen()?.saldoPen ?? 0) < 0">
+      <span>Saldo disponible en caja</span>
+      <strong>S/ {{ resumen()?.saldoPen ?? 0 | number: '1.2-2' }}</strong>
+    </div>
+    <div class="saldo"><span>Ingresos del mes</span><strong class="verde">S/ {{ resumen()?.ingresosMes ?? 0 | number: '1.2-2' }}</strong></div>
+    <div class="saldo"><span>Egresos del mes</span><strong class="rojo">S/ {{ resumen()?.egresosMes ?? 0 | number: '1.2-2' }}</strong></div>
+  </div>
+
+  <div class="dos-col">
+    <!-- Ingreso / egreso -->
+    <div class="card">
+      <h2>Registrar ingreso o saldo inicial</h2>
+      <form [formGroup]="movForm" (ngSubmit)="registrarMovimiento()" class="stack">
+        <label>Tipo
+          <select formControlName="tipo">
+            <option value="INGRESO">Ingreso</option>
+            <option value="EGRESO">Egreso</option>
+          </select>
+        </label>
+        <label>Monto (S/)
+          <input type="number" step="0.01" min="0" formControlName="monto" />
+        </label>
+        <label>Concepto
+          <input type="text" maxlength="200" formControlName="concepto" placeholder="Ej.: Pago del mayorista, saldo para la semana" />
+          @if (movForm.controls.concepto.touched && movForm.controls.concepto.invalid) { <span class="err">Escribe el concepto.</span> }
+        </label>
+        <label class="check"><input type="checkbox" formControlName="saldoInicial" /> Es el saldo inicial de la caja</label>
+        <button type="submit" class="btn-gold" [disabled]="guardando() || movForm.invalid">Registrar en caja</button>
+      </form>
+    </div>
+
+    <!-- Adelanto -->
+    <div class="card">
+      <h2>Nuevo adelanto a un minero</h2>
+      <form [formGroup]="adelantoForm" (ngSubmit)="registrarAdelanto()" class="stack">
+        <label>Minero
+          <select formControlName="idMinero">
+            <option [ngValue]="0" disabled>— Selecciona un minero —</option>
+            @for (m of mineros(); track m.idMinero) {
+              <option [ngValue]="m.idMinero">{{ m.documentoIdentidad }} · {{ m.nombresApellidos }}</option>
+            }
+          </select>
+        </label>
+        <label>Monto del adelanto (S/)
+          <input type="number" step="0.01" min="0" formControlName="montoPen" />
+        </label>
+        <label>Observación (opcional)
+          <input type="text" maxlength="200" formControlName="observacion" placeholder="Ej.: adelanto para víveres" />
+        </label>
+        <p class="nota">El adelanto sale de la caja y no puede superar el saldo disponible.</p>
+        <button type="submit" class="btn-gold" [disabled]="guardando() || adelantoForm.invalid">Entregar adelanto</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lista de adelantos -->
+  <div class="card">
+    <div class="fila-titulo">
+      <h2>Adelantos a mineros</h2>
+      <label class="filtro">Estado
+        <select [value]="filtroEstado()" (change)="cambiarFiltro($any($event.target).value)">
+          <option value="PENDIENTE">Pendientes</option>
+          <option value="DESCONTADO">Descontados</option>
+          <option value="ANULADO">Anulados</option>
+          <option value="">Todos</option>
+        </select>
+      </label>
+    </div>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>N.º</th><th>Fecha</th><th>Minero</th><th>Monto</th><th>Observación</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+          @for (p of prestamos(); track p.idPrestamo) {
+            <tr>
+              <td>#{{ p.idPrestamo }}</td>
+              <td>{{ p.fecha | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ p.minero }}<br /><small>DNI {{ p.documentoMinero }}</small></td>
+              <td>S/ {{ p.montoPen | number: '1.2-2' }}</td>
+              <td>{{ p.observacion || '—' }}</td>
+              <td>
+                <span class="badge" [class.pend]="p.estado === 'PENDIENTE'" [class.desc]="p.estado === 'DESCONTADO'" [class.anul]="p.estado === 'ANULADO'">{{ p.estado }}</span>
+                @if (p.idCompraG2) { <small> compra #{{ p.idCompraG2 }}</small> }
+              </td>
+              <td>@if (p.estado === 'PENDIENTE') { <button type="button" class="btn-link" (click)="anularAdelanto(p)">Anular</button> }</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="vacio">No hay adelantos con este estado.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Movimientos -->
+  <div class="card">
+    <h2>Últimos movimientos de caja</h2>
+    <div class="tabla-wrap">
+      <table>
+        <thead><tr><th>Fecha</th><th>Origen</th><th>Concepto</th><th class="der">Monto</th><th></th></tr></thead>
+        <tbody>
+          @for (m of movimientos(); track m.idMovimiento) {
+            <tr [class.tachado]="m.anulado">
+              <td>{{ m.fecha | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ m.origen.replace('_', ' ') }}</td>
+              <td>{{ m.concepto }}</td>
+              <td class="der" [class.verde]="m.tipo === 'INGRESO'" [class.rojo]="m.tipo === 'EGRESO'">
+                {{ m.tipo === 'INGRESO' ? '+' : '−' }} S/ {{ m.monto | number: '1.2-2' }}
+              </td>
+              <td>@if (m.anulable) { <button type="button" class="btn-link" (click)="anularMovimiento(m)">Anular</button> }</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="vacio">Sin movimientos todavía.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

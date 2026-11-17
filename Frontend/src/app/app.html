@@ -1,0 +1,33 @@
+<div class="shell">
+  <header class="header">
+    <a routerLink="/" class="brand">
+      <img src="images/logo-sitra-oro.jpg" alt="" width="38" height="38" />
+      <span>SITRA<span>-ORO</span></span>
+    </a>
+    <div class="account">
+      <span class="datetime-badge">{{ fechaHora() }}</span>
+      <span class="user-badge">Acopiador Uno</span>
+      <span class="role">Acopiador</span>
+      <button type="button" (click)="salir()">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <p class="section">Espacio de trabajo</p>
+    <a routerLink="/compras" routerLinkActive="active">Compras de oro</a>
+    <a routerLink="/caja" routerLinkActive="active">Caja y adelantos</a>
+    <a routerLink="/mineros" routerLinkActive="active">Mineros</a>
+    <a routerLink="/mercado" routerLinkActive="active">Mercado del oro</a>
+
+    <p class="estado" [class.ok]="conexion() === 'activa'" [class.down]="conexion() === 'caida'">
+      <i></i>
+      @switch (conexion()) {
+        @case ('activa') { Oracle conectado · 8082 }
+        @case ('caida') { Backend sin conexión · 8082 }
+        @default { Verificando conexión… }
+      }
+    </p>
+  </aside>
+
+  <main class="content" id="main-content"><router-outlet /></main>
+</div>

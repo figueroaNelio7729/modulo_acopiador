@@ -1,0 +1,54 @@
+<section class="page">
+  <p class="eyebrow">Acopio · mineros</p>
+  <h1>{{ editando ? 'Editar minero' : 'Registrar minero' }}</h1>
+  <p class="lead">Escribe el DNI (8 dígitos): el nombre se completa solo desde RENIEC.</p>
+
+  @if (errorServidor()) {
+    <p class="notice error">{{ errorServidor() }}</p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <label>
+      DNI / Documento de identidad
+      <input formControlName="documentoIdentidad" maxlength="15" inputmode="numeric" autocomplete="off" />
+      @if (consultandoDni()) {
+        <span class="hint cargando">Consultando DNI en RENIEC...</span>
+      } @else if (estadoDni()) {
+        <span class="hint" [class.exito]="estadoDni().includes('obtenido')">{{ estadoDni() }}</span>
+      } @else {
+        <span class="hint">Debe tener entre 8 y 15 caracteres.</span>
+      }
+      @if (form.controls.documentoIdentidad.touched && form.controls.documentoIdentidad.invalid) {
+        <span class="error">El documento es obligatorio (8 a 15 caracteres).</span>
+      }
+    </label>
+
+    <label>
+      Nombres y apellidos
+      <input formControlName="nombresApellidos" maxlength="150" />
+      @if (estadoDni().includes('obtenido')) {
+        <span class="hint exito">Nombre completado automáticamente por DNI</span>
+      }
+      @if (form.controls.nombresApellidos.touched && form.controls.nombresApellidos.invalid) {
+        <span class="error">El nombre es obligatorio (máx. 150 caracteres).</span>
+      }
+    </label>
+
+    <label>
+      Teléfono (opcional)
+      <input formControlName="telefono" maxlength="20" />
+    </label>
+
+    <label>
+      Zona de procedencia (opcional)
+      <input formControlName="zonaProcedencia" maxlength="100" placeholder="La Rinconada - Lunar de Oro" />
+    </label>
+
+    <div class="actions">
+      <button class="primary" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Guardando…' : 'Guardar' }}
+      </button>
+      <a class="secondary" routerLink="/mineros">Cancelar</a>
+    </div>
+  </form>
+</section>

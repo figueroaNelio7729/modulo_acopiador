@@ -1,0 +1,58 @@
+<section class="page">
+  <div class="title-row">
+    <div>
+      <p class="eyebrow">Acopio · datos maestros</p>
+      <h1>Mineros</h1>
+      <p class="lead">Registro de mineros artesanales conectado al backend de SITRA-ORO.</p>
+    </div>
+    <div class="actions">
+      <button type="button" class="secondary" (click)="cargar()">Actualizar</button>
+      <a routerLink="/mineros/nuevo" class="primary">Registrar minero</a>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="notice error">{{ error() }}</p>
+  }
+  @if (ok()) {
+    <p class="notice ok">{{ ok() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="notice">Cargando mineros...</p>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>DNI</th>
+            <th>Nombres y apellidos</th>
+            <th>Teléfono</th>
+            <th>Zona de procedencia</th>
+            <th>Fecha de registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of mineros(); track m.idMinero) {
+            <tr>
+              <td>{{ m.idMinero }}</td>
+              <td>{{ m.documentoIdentidad }}</td>
+              <td>{{ m.nombresApellidos }}</td>
+              <td>{{ m.telefono || '—' }}</td>
+              <td>{{ m.zonaProcedencia || '—' }}</td>
+              <td>{{ m.fechaRegistro | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td class="acciones">
+                <a [routerLink]="['/mineros', m.idMinero, 'editar']">Editar</a>
+                <button type="button" (click)="eliminar(m)">Eliminar</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="empty">No hay mineros registrados.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

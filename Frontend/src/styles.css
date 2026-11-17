@@ -1,0 +1,230 @@
+/* Estilos globales: misma paleta oscura/dorada del modulo Acopiador de SITRA-ORO */
+:root { color-scheme: dark; font-family: Inter, system-ui, 'Segoe UI', sans-serif; background: #071426; color: #edf3fb; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; background: #071426; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+
+.eyebrow { margin: 0; color: #f2b736; font-size: .75rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.error { color: #ffb4ab; font-size: .88rem; margin: .4rem 0 0; }
+.notice { padding: .8rem 1rem; border-radius: .6rem; background: #142b48; color: #cfe4ff; margin: 1rem 0; }
+.notice.error { background: #3c1b20; color: #ffc8c1; font-size: 1rem; }
+.notice.ok { background: #12372c; color: #a7f0d2; }
+
+.primary, .secondary, .danger {
+  padding: .75rem 1.1rem; border: 0; border-radius: .5rem; font-weight: 800;
+  text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center;
+}
+.primary { background: #f2b736; color: #172033; }
+.primary:hover { background: #ffd36d; }
+.primary:disabled { opacity: .5; cursor: not-allowed; }
+.secondary { background: #1b3552; color: #dce7f5; border: 1px solid #345578; }
+.danger { background: #3b1a20; color: #ffb4ab; border: 1px solid #7c3033; }
+
+.table-wrap { overflow-x: auto; border: 1px solid #274567; border-radius: .7rem; background: #0a1b31; }
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+th, td { padding: .9rem 1rem; text-align: left; border-bottom: 1px solid #1c3553; }
+th { color: #9eb8d8; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; }
+td { color: #dce7f5; }
+tbody tr:last-child td { border-bottom: 0; }
+.empty { text-align: center; color: #aebdd1; }
+
+/* ===== Mercado del oro (copiado de SITRA-ORO) ===== */
+.terminal-workspace {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 1rem clamp(1rem, 2vw, 2rem) 2.5rem;
+  color: #edf3fb;
+}
+
+/* ==================== 1. TICKER TAPE (BLOOMBERG / KITCO) ==================== */
+.market-ticker-tape {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #030811;
+  border: 1px solid rgba(70, 110, 160, 0.4);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.85rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.ticker-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse-dot 1.8s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 0.6; transform: scale(0.9); }
+}
+
+.ticker-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  width: 100%;
+}
+.ticker-scroll::-webkit-scrollbar { display: none; }
+
+.ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  white-space: nowrap;
+}
+
+.ticker-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  font-family: Consolas, monospace;
+}
+
+.ticker-sym {
+  font-weight: 850;
+  color: #94a3b8;
+}
+
+.ticker-val {
+  font-weight: 900;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+.ticker-change {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.ticker-change.up {
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.ticker-change.down {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.ticker-name {
+  font-size: 0.68rem;
+  color: #64748b;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.dash-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem 2rem; flex-wrap: wrap; margin: 1.25rem 0 1.25rem; }
+.dash-header h1 { margin: 0 0 .3rem; font-size: 1.75rem; font-weight: 750; letter-spacing: -.02em; color: #f8fafc; line-height: 1.15; }
+.dash-header p { margin: 0; color: #a7b7cc; font-size: .9rem; }
+.dash-header time { font-variant-numeric: tabular-nums; }
+.resumen-acopio { color: #edf3fb; padding-bottom: 2rem; }
+/* Cinta de cotizaciones: letra legible y gris con contraste suficiente. */
+.ticker-badge span, .ticker-name { font-size: .75rem; }
+.ticker-name { color: #a3b1c2; }
+/* Punto "en vivo" quieto: el parpadeo infinito distrae sin informar. */
+.live-dot { animation: none !important; }
+
+/* ===== Comprobante de compra (copiado de SITRA-ORO) ===== */
+.comprobante-dialogo { width: min(560px, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 0; border: 0; border-radius: 16px; background: #fbfaf7; color: #101923; box-shadow: 0 24px 70px rgba(2, 8, 20, .45); }
+.comprobante-dialogo::backdrop { background: rgba(4, 10, 18, .72); }
+.comprobante { display: flex; flex-direction: column; }
+.comprobante-cabecera { display: flex; align-items: center; gap: .85rem; padding: 1.1rem 1.3rem; background: #0d171f; color: #fff; border-radius: 16px 16px 0 0; }
+.comprobante-cabecera img { border-radius: 8px; background: #030405; }
+.comprobante-cabecera h2 { margin: 0; font-size: 1.1rem; color: #efb735; letter-spacing: -.01em; }
+.comprobante-cabecera p { margin: .15rem 0 0; color: #d2d9dc; font-size: .82rem; }
+.comprobante-numero { margin-left: auto; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.comprobante-datos { display: grid; gap: .45rem; margin: 0; padding: 1.1rem 1.3rem .6rem; }
+.comprobante-datos div { display: flex; justify-content: space-between; gap: 1rem; font-size: .92rem; }
+.comprobante-datos dt { color: #6e7880; }
+.comprobante-datos dd { margin: 0; font-weight: 700; text-align: right; }
+.comprobante-tabla { width: calc(100% - 2.6rem); margin: .4rem 1.3rem; border-collapse: collapse; font-size: .84rem; min-width: 0; }
+.comprobante-tabla th { padding: .5rem .3rem; border-bottom: 1px solid #e7e4dc; color: #6e7880; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; text-align: left; white-space: nowrap; }
+.comprobante-tabla td { padding: .6rem .3rem; border-bottom: 1px solid #efece5; white-space: nowrap; }
+.comprobante-tabla .num { text-align: right; font-variant-numeric: tabular-nums; }
+.comprobante-total { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: .5rem 1.3rem 0; padding: .9rem 0; border-top: 2px solid #101923; }
+.comprobante-total span { font-weight: 800; }
+.comprobante-total strong { font-size: 1.6rem; color: #92630a; font-variant-numeric: tabular-nums; }
+.comprobante-nota { margin: 0 1.3rem; color: #6e7880; font-size: .78rem; }
+.comprobante-acciones { display: flex; flex-wrap: wrap; gap: .6rem; padding: 1.1rem 1.3rem 1.3rem; }
+.comprobante-acciones > * { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0 1rem; border-radius: .65rem; font: inherit; font-weight: 750; font-size: .9rem; text-decoration: none; cursor: pointer; }
+.comprobante-principal { flex: 1 1 100%; border: 0; background: #d39b1c; color: #201800; }
+.comprobante-principal:hover:not(:disabled) { background: #e3ae35; }
+.comprobante-principal:disabled { opacity: .7; cursor: progress; }
+.comprobante-secundario { flex: 1 1 0; border: 1px solid #cfd8e3; background: #fff; color: #27415f; }
+.comprobante-secundario:hover { border-color: #9fb0c5; }
+.comprobante-acciones > *:focus-visible { outline: 2px solid #92630a; outline-offset: 2px; }
+.comprobante-aviso { margin: -.6rem 1.3rem 1.2rem; color: #27415f; font-size: .82rem; }
+.comprobante-abrir { margin-top: .6rem; min-height: 40px; padding: 0 1rem; border: 1px solid #d9e1eb; border-radius: .6rem; background: #fff; color: #263b58; font: inherit; font-weight: 700; cursor: pointer; }
+.comprobante-abrir:hover { border-color: #b98a25; }
+@media (max-width: 480px) { .comprobante-tabla th:nth-child(2), .comprobante-tabla td:nth-child(2) { display: none; } }
+
+/* ==================== PRÉSTAMOS DEL ACOPIADOR AL MINERO ==================== */
+.liquidacion-acopio { margin: 1rem 0; }
+.liq-nota { margin: 0; color: #66768b; font-size: .78rem; }
+.comprobante-descuentos { display: grid; gap: .35rem; margin: .4rem 1.3rem 0; }
+.comprobante-descuentos div { display: flex; justify-content: space-between; font-size: .9rem; }
+.comprobante-descuentos dt { color: #6e7880; }
+.comprobante-descuentos dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
+.comprobante-descuentos div:last-child dd { color: #b42318; }
+.punto-oro { display: inline-block; width: .6rem; height: .6rem; margin: 0 .3rem 0 .15rem; border-radius: 50%; vertical-align: baseline; }
+.punto-rojo { background: #c2410c; }
+.punto-verde { background: #4d7c0f; }
+.delivery-confirmation { width:min(660px,calc(100vw - 2rem)); max-height:85vh; box-sizing:border-box; padding:1.6rem; border:1px solid #d8e2ed; border-radius:1rem; background:#fff; color:#22354e; box-shadow:0 24px 80px #10243a40; }
+.delivery-confirmation::backdrop { background:#10243a88; backdrop-filter:blur(3px); }
+.confirmation-heading { display:flex; justify-content:space-between; align-items:start; gap:1rem; }
+.confirmation-heading h2 { margin:.45rem 0; font-size:1.55rem; }
+.confirmation-close { width:36px; height:36px; flex-shrink:0; border:1px solid #d8e2ed; border-radius:50%; background:#fff; color:#53667f; font-size:1.5rem; cursor:pointer; }
+.delivery-confirmation > p { color:#68798f; line-height:1.6; font-size:.9rem; }
+.confirmation-totals { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.65rem; margin:1.2rem 0; }
+.confirmation-totals > div { display:grid; gap:.45rem; padding:1rem; border:1px solid #e2e8ef; border-radius:.7rem; }
+.confirmation-totals span { font-size:.8rem; color:#68798f; }
+.confirmation-totals strong { font-size:1.35rem; }
+.confirmation-red { background:#fff5f3; }.confirmation-green { background:#f0faf5; }.confirmation-total { background:#fff7df; }
+.confirmation-purchases { max-height:260px; overflow:auto; border:1px solid #e2e8ef; border-radius:.7rem; }
+.confirmation-purchase { display:flex; align-items:center; gap:1rem; padding:.85rem 1rem; border-bottom:1px solid #e2e8ef; font-size:.85rem; }
+.confirmation-purchase:last-child { border-bottom:0; }.confirmation-purchase > div { display:grid; gap:.25rem; flex:1; min-width:0; }.confirmation-purchase > div span { color:#68798f; overflow-wrap:anywhere; }
+.confirmation-actions { display:flex; justify-content:flex-end; gap:.75rem; margin-top:1.3rem; padding-top:1rem; border-top:1px solid #e2e8ef; }
+.confirmation-actions button { min-height:44px; }
+@media (max-width:550px) { .delivery-confirmation { padding:1rem; }.confirmation-totals { grid-template-columns:1fr; }.confirmation-totals > div { display:flex; justify-content:space-between; align-items:center; }.confirmation-actions { flex-direction:column; } }
+
+/* El comprobante es claro: sus celdas no heredan el color de las tablas oscuras */
+.comprobante-tabla td { color: #101923; }
+.comprobante-tabla th { color: #6e7880; }
+
+/* ===== Reglas compartidas por "Compras de oro" y "Caja y adelantos" ===== */
+.head { display: flex; justify-content: space-between; align-items: start; gap: 1rem; flex-wrap: wrap; }
+.head h1 { margin: .4rem 0; font-size: clamp(2rem, 4vw, 2.9rem); letter-spacing: -.04em; color: #14233b; }
+.btn-gold { background: #d4a017; color: #1d1500; }
+.btn-gold:hover:not(:disabled) { background: #e6b52c; }
+.btn-gold:disabled { background: #e8dfc6; color: #9a8e6d; cursor: not-allowed; }
+.btn-light { background: #fff; color: #14233b; border-color: #d3dbe6; }
+.alert { margin: 0; padding: .85rem 1.1rem; border-radius: .7rem; font-weight: 600; }
+.error-alert { background: #fde4e1; color: #9b2c21; }
+.ok-alert { background: #dcf5e9; color: #146c43; }
+.tabla-wrap { overflow-x: auto; }
+.der { text-align: right; white-space: nowrap; }
+.err { color: #c0392b; font-weight: 600; }

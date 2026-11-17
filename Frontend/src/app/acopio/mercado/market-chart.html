@@ -1,0 +1,105 @@
+<section class="panel-mercado-vivo" aria-labelledby="mercado-vivo-acopio-title">
+  <div class="mercado-cabecera">
+    <div class="mercado-titular">
+      <span class="badge-live"><span class="live-dot"></span> EN VIVO</span>
+      <h2 id="mercado-vivo-acopio-title">Cotizaciones Internacionales y Tipo de Cambio</h2>
+      <p>Precios spot en tiempo real para fijación en balanza (Kitco / Bullion Spot y SUNAT / Bloomberg).</p>
+    </div>
+    <div class="mercado-acciones">
+      <button type="button" class="btn-recargar" (click)="recargar()" [disabled]="cargandoMercado()">
+        {{ cargandoMercado() ? 'Actualizando…' : '🔄 Actualizar datos' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- TARJETAS CON VALORES DE MERCADO (ORO SPOT & DÓLAR PERÚ) -->
+  <div class="mercado-tarjetas">
+    <!-- Tarjeta Oro Spot Kitco -->
+    <div class="tarjeta-mercado tarjeta-oro">
+      <div class="tarjeta-top">
+        <div class="activo-info">
+          <span class="activo-icono">🥇</span>
+          <div>
+            <span class="activo-nombre">ORO SPOT (XAU / USD)</span>
+            <span class="activo-sub">Kitco / Bullion Spot @if (ultimoTickHora()) { · En vivo: {{ ultimoTickHora() }} }</span>
+          </div>
+        </div>
+        @if (oroMercado(); as oro) {
+          <span class="variacion" [class.subida]="oro.cambio24h >= 0" [class.bajada]="oro.cambio24h < 0">
+            {{ oro.cambio24h >= 0 ? '+' : '' }}{{ oro.cambio24h | number:'1.2-2' }}%
+          </span>
+        }
+      </div>
+
+      @if (oroMercado(); as oro) {
+        <div class="precio-cuerpo">
+          <div class="caja-precio principal">
+            <span class="label">PRECIO SPOT (EN VIVO)</span>
+            <strong class="monto" [class.precio-flash]="titilarPrecio()">$ {{ oro.ultimo | number:'1.2-2' }}</strong>
+          </div>
+          <div class="caja-precio">
+            <span class="label">BID / ASK</span>
+            <strong class="monto-sec">$ {{ oro.bid | number:'1.2-2' }} / ${{ oro.ask | number:'1.2-2' }}</strong>
+          </div>
+        </div>
+        <div class="rango-barra">
+          <span class="rango-texto">Rango 24h: <b>${{ oro.min24h | number:'1.1-1' }}</b> - <b>${{ oro.max24h | number:'1.1-1' }}</b></span>
+          <span class="rango-ref">Ref. Onza Troy LBMA / Kitco</span>
+        </div>
+      } @else {
+        <p class="cargando-aviso">Cargando cotización de oro…</p>
+      }
+    </div>
+
+    <!-- Tarjeta Dólar Perú Bloomberg / SUNAT -->
+    <div class="tarjeta-mercado tarjeta-dolar">
+      <div class="tarjeta-top">
+        <div class="activo-info">
+          <span class="activo-icono">💵</span>
+          <div>
+            <span class="activo-nombre">DÓLAR PERÚ (USD / PEN)</span>
+            <span class="activo-sub">Bloomberg Línea & SUNAT</span>
+          </div>
+        </div>
+        <span class="activo-badge-oficial">OFICIAL SUNAT / BCRP</span>
+      </div>
+
+      @if (dolarMercado(); as dolar) {
+        <div class="precio-cuerpo">
+          <div class="caja-precio principal">
+            <span class="label">MERCADO INTERBANCARIO</span>
+            <strong class="monto">S/ {{ dolar.interbancario | number:'1.4-4' }}</strong>
+          </div>
+          @if (dolar.sunatVenta) {
+            <div class="caja-precio">
+              <span class="label">SUNAT VENTA / COMPRA</span>
+              <strong class="monto-sec">S/ {{ dolar.sunatVenta | number:'1.3-3' }} / {{ dolar.sunatCompra | number:'1.3-3' }}</strong>
+            </div>
+          }
+        </div>
+        <div class="rango-barra">
+          <span class="rango-texto">Tipo Venta SUNAT: <b>S/ {{ (dolar.sunatVenta ?? dolar.interbancario) | number:'1.3-4' }}</b></span>
+          <span class="rango-ref">Superintendencia Nacional SUNAT</span>
+        </div>
+      } @else {
+        <p class="cargando-aviso">Cargando cotización del dólar…</p>
+      }
+    </div>
+  </div>
+
+  <!-- GRÁFICA INTERACTIVA TRADINGVIEW DUAL / VELAS -->
+  <div class="mercado-grafica-panel">
+    <div class="grafica-pestanas">
+      <button type="button" class="btn-tab-grafica" [class.activa]="tipoGrafica() === 'DUAL'" (click)="cambiarGrafica('DUAL')">
+        📊 Resumen Dual (Kitco & Bloomberg)
+      </button>
+      <button type="button" class="btn-tab-grafica" [class.activa]="tipoGrafica() === 'ORO'" (click)="cambiarGrafica('ORO')">
+        🕯 Velas Oro Spot (XAU/USD)
+      </button>
+      <button type="button" class="btn-tab-grafica" [class.activa]="tipoGrafica() === 'DOLAR'" (click)="cambiarGrafica('DOLAR')">
+        📉 Dólar Sol (USD/PEN)
+      </button>
+    </div>
+    <div #contenedorGrafica class="contenedor-tradingview"></div>
+  </div>
+</section>
